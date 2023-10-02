@@ -5,6 +5,7 @@ resources
 CMakeFiles
 CGAL_Qt5*
 .vscode
+.vs
 
 qrc*
 

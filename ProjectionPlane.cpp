@@ -75,6 +75,7 @@ class ProjectionPlane {
             return Proj2DRes(projectedPoints, tmpOffsetPlane, CGAL::approximate_sqrt(tmpMaxDistNeg) + CGAL::approximate_sqrt(tmpMaxDistPos));
         }
 
+        //Non è una proiezione, è solo un cambio di base
         Points3 unprojectTo3D(CGAL::Polygon_2<K>::iterator it, CGAL::Polygon_2<K>::iterator end){
             Points3 tmpUnpPoints;
             for(; it != end; it++){

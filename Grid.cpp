@@ -9,6 +9,10 @@ typedef std::unordered_set<K::Point_3> GridPoints3;
 typedef std::vector<K::Point_2> Points2;
 typedef std::unordered_set<K::Point_2> GridPoints2;
 
+typedef struct Coords2 {
+    float x, y;
+} Coords2;
+
 typedef struct BoxDirections3 {
     BoxDirections3(){}
     BoxDirections3(K::Vector_3 x, K::Vector_3 y, K::Vector_3 z, K::Point_3 o){
@@ -53,16 +57,24 @@ class Grid3{
 
         GridPoints3 snapToGrid(Points3::iterator it, Points3::iterator end){
             GridPoints3 snappedPoints;
+            GridPoints3 rescaledPoints;
+
             for(; it != end; it++){
                 K::Vector_3 pointVector = K::Vector_3(boxDirs._origin, *it);
                 double snappedX = closestInteger(((pointVector * boxDirs._x) / boxDirs._lenX) / boxDirs._lenX);
                 double snappedY = closestInteger(((pointVector * boxDirs._y) / boxDirs._lenY) / boxDirs._lenY);
                 double snappedZ = closestInteger(((pointVector * boxDirs._z) / boxDirs._lenZ) / boxDirs._lenZ);
 
-                snappedPoints.insert(K::Point_3(snappedX, snappedY, snappedZ));
+                K::Point_3 gridCoords = K::Point_3(snappedX, snappedY, snappedZ);
+                int found = snappedPoints.count(gridCoords);
+
+                if (found == 0) {
+                    snappedPoints.insert(gridCoords);
+                    rescaledPoints.insert(K::Point_3(snappedX * boxDirs._lenX, snappedY * boxDirs._lenY, snappedY * boxDirs._lenZ));
+                }
             }
 
-            return snappedPoints;
+            return rescaledPoints;
         }
 
 
@@ -97,9 +109,9 @@ class Grid3{
         std::pair<K::Point_3, K::Point_3> getDiameter(GridPoints3::iterator it1, GridPoints3::iterator it2, GridPoints3::iterator end){
             double tmpMaxLength = 0;
             K::Point_3 first, second;
-            //TODO: what happens if it1 and it2 are the same
+
             for(; it1 != end; it1++){
-                for(; it2 != end; it2++){
+                for(it2 = it1; it2 != end; it2++){
                     double tmpLength = (*it1 - *it2).squared_length();
                     if(tmpMaxLength < tmpLength){
                         tmpMaxLength = tmpLength;
@@ -144,24 +156,31 @@ class Grid2{
 
         GridPoints2 snapToGrid(Points2::iterator it, Points2::iterator end){
             GridPoints2 snappedPoints;
+            GridPoints2 rescaledPoints;
 
             for(; it != end; it++){
                 K::Vector_2 pointVector = K::Vector_2(boxDirs._origin, *it);
-                double snappedX = closestInteger(((pointVector * boxDirs._x) / boxDirs._lenX) / boxDirs._lenX);
-                double snappedY = closestInteger(((pointVector * boxDirs._y) / boxDirs._lenY) / boxDirs._lenY);
+                double snappedX = closestInteger(((pointVector * (boxDirs._x / boxDirs._lenX)) / boxDirs._lenX));
+                double snappedY = closestInteger(((pointVector * (boxDirs._y / boxDirs._lenY)) / boxDirs._lenY));
 
-                snappedPoints.insert(K::Point_2(snappedX, snappedY));
+                K::Point_2 gridCoords = K::Point_2(snappedX, snappedY);
+                int found = snappedPoints.count(gridCoords);
+
+                if (found == 0) {
+                    snappedPoints.insert(gridCoords);
+                    rescaledPoints.insert(K::Point_2(snappedX * boxDirs._lenX, snappedY * boxDirs._lenY));
+                }
             }
 
-            return snappedPoints;
+            return rescaledPoints;
         }
 
         K::Segment_2 getDiameter(GridPoints2 snappedPoints){
             double tmpMaxLength = 0;
             K::Segment_2 tmpMaxDiameter;
-            //TODO: what happens if it1 and it2 are the same
+
             for(GridPoints2::iterator it1 = snappedPoints.begin(); it1 != snappedPoints.end(); it1++){
-                for(GridPoints2::iterator it2 = snappedPoints.begin(); it2 != snappedPoints.end(); it2++){
+                for (GridPoints2::iterator it2 = it1; it2 != snappedPoints.end(); it2++) {
                     K::Segment_2 tmpDiameter = K::Segment_2(*it1, *it2);
                     double tmpLength = tmpDiameter.squared_length();
                     if(tmpMaxLength < tmpLength){

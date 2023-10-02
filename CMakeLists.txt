@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.1...3.15)
 
-project( main.out )
+project(Approx_MVBB)
 
 
 # CGAL and its components
@@ -36,10 +36,11 @@ endif()
 # Creating entries for target: main.out
 # ############################
 
-add_executable( main.out  Grid.cpp main.cpp PointsBox.cpp qrc_CGAL.cpp qrc_File.cpp qrc_Input.cpp qrc_Triangulation_2.cpp )
-
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS main.out )
+add_executable( main main.cpp Grid.cpp PointsBox.cpp)
+if(NOT CGAL_Qt5_FOUND)
+	message(STATUS "CGAL_Qt5 not found")
+	return()
+endif()
 
 # Link the executable to CGAL and third-party libraries
-target_link_libraries(main.out PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Basic_viewer)
-
+target_link_libraries(main PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Basic_viewer)
