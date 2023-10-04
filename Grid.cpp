@@ -107,12 +107,12 @@ class Grid3{
         }
 
         std::pair<K::Point_3, K::Point_3> getDiameter(GridPoints3::iterator it1, GridPoints3::iterator it2, GridPoints3::iterator end){
-            double tmpMaxLength = 0;
+            double tmpMaxLength = 0, tmpLength;
             K::Point_3 first, second;
 
             for(; it1 != end; it1++){
                 for(it2 = it1; it2 != end; it2++){
-                    double tmpLength = (*it1 - *it2).squared_length();
+                    tmpLength = (*it1 - *it2).squared_length();
                     if(tmpMaxLength < tmpLength){
                         tmpMaxLength = tmpLength;
                         first = *it1;
@@ -175,22 +175,22 @@ class Grid2{
             return rescaledPoints;
         }
 
-        K::Segment_2 getDiameter(GridPoints2 snappedPoints){
+        K::Segment_2 getDiameter(GridPoints2::const_iterator begin1, GridPoints2::const_iterator begin2, GridPoints2::const_iterator end){
             double tmpMaxLength = 0;
-            K::Segment_2 tmpMaxDiameter;
+            K::Point_2 src, dest;
 
-            for(GridPoints2::iterator it1 = snappedPoints.begin(); it1 != snappedPoints.end(); it1++){
-                for (GridPoints2::iterator it2 = it1; it2 != snappedPoints.end(); it2++) {
-                    K::Segment_2 tmpDiameter = K::Segment_2(*it1, *it2);
-                    double tmpLength = tmpDiameter.squared_length();
+            for(; begin1 != end; begin1++){
+                for (begin2 = begin1; begin2 != end; begin2++) {
+                    double tmpLength = (*begin1 - *begin2).squared_length();
                     if(tmpMaxLength < tmpLength){
                         tmpMaxLength = tmpLength;
-                        tmpMaxDiameter = tmpDiameter;
+                        src = *begin1;
+                        dest = *begin2;
                     }
                 }
             }
 
-            return tmpMaxDiameter;
+            return K::Segment_2(src, dest);
         }
 
         Points2 projectToLine(GridPoints2::iterator it, GridPoints2::iterator end, K::Line_2 hLine){
