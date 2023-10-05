@@ -36,7 +36,7 @@ endif()
 # Creating entries for target: main.out
 # ############################
 
-add_executable( main main.cpp Grid.cpp PointsBox.cpp BoundingBox.cpp BoundingBox.hpp)
+add_executable( main main.cpp Grid.cpp PointsBox.cpp ProjectionPlane.cpp BoundingBox.cpp BoundingBox.hpp)
 if(NOT CGAL_Qt5_FOUND)
 	message(STATUS "CGAL_Qt5 not found")
 	return()

@@ -144,7 +144,7 @@ namespace BoundingBox {
         K::Vector_3 scaledDiam = makeCorrectDirVec(diamEndpoints.first, diamEndpoints.second);
 
         //Proietta punti su piano perpendicolare a vettore diametro
-        ProjectionPlane hPlane = ProjectionPlane(K::Point_3(0, 0, 0) + scaledDiam, scaledDiam);
+        ProjectionPlane hPlane = ProjectionPlane(K::Point_3(0,0,0), scaledDiam);
         Proj2DRes resProj1 = hPlane.projectTo2D(points.begin(), points.end());
 
         //Computa axis-aligned bounding box dei punti proiettati su piano
@@ -210,28 +210,23 @@ namespace BoundingBox {
         double bestVolume = 10000;
 
         for (std::vector<K::Vector_3>::iterator it = candidates.begin(); it != candidates.end(); it++) {
-            ProjectionPlane candPlane = ProjectionPlane(K::Point_3(0, 0, 0), *it);
+            ProjectionPlane candPlane = ProjectionPlane(K::Point_3(0,0,0), *it);
 
             Proj2DRes resultProj = candPlane.projectTo2D(points.begin(), points.end());
 
             Points2 outp;
             CGAL::convex_hull_2(resultProj._projPoints.begin(), resultProj._projPoints.end(), std::back_inserter(outp));
-            //CGAL::ch_graham_andrew(resultProj._projPoints.begin(), resultProj._projPoints.end(), std::back_inserter(outp));
 
-            CGAL::Polygon_2<K> minAreaRect, minAreaRectTest;
-            //CGAL::min_rectangle_2(outp.begin(), outp.end(), std::back_inserter(minAreaRectTest));
+            CGAL::Polygon_2<K> minAreaRect;
+            //CGAL::min_rectangle_2(outp.begin(), outp.end(), std::back_inserter(minAreaRect));
             minAreaRect = computeMABB(outp);
 
-            K::Segment_2 base2 = K::Segment_2(minAreaRect.vertices()[0], minAreaRect.vertices()[1]);
-            K::Segment_2 height2 = K::Segment_2(minAreaRect.vertices()[1], minAreaRect.vertices()[2]);
             Points3 tmpUnpMinAreaPts = candPlane.unprojectTo3D(minAreaRect.vertices_begin(), minAreaRect.vertices_end());
-
             K::Segment_3 base = K::Segment_3(tmpUnpMinAreaPts[0], tmpUnpMinAreaPts[1]);
             K::Segment_3 height = K::Segment_3(tmpUnpMinAreaPts[1], tmpUnpMinAreaPts[2]);
 
             double tmpVol = CGAL::approximate_sqrt(base.squared_length()) * CGAL::approximate_sqrt(height.squared_length()) * resultProj._diam;
-            _LOG("Volume = " + std::to_string(tmpVol));
-            //std::cout << "Volume = " << tmpVol << std::endl;
+            _LOG("\tCandidate Volume = " + std::to_string(tmpVol));
 
             if (tmpVol < bestVolume) {
                 bestVolume = tmpVol;
@@ -248,6 +243,7 @@ namespace BoundingBox {
 
         CGAL::Polyhedron_3<K> oobb;
         K::Point_3 org = K::Point_3(0, 0, 0);
+
         CGAL::make_hexahedron(
             unpMinAreaPts[0] + offsetPlane,
             unpMinAreaPts[1] + offsetPlane,
@@ -258,16 +254,7 @@ namespace BoundingBox {
             unpMinAreaPts[1] + offsetPlane + kv,
             unpMinAreaPts[2] + offsetPlane + kv,
             oobb);
-        /*CGAL::make_hexahedron(
-            org,
-            org + scaledDiam,
-            org + scaledDiam2 + scaledDiam,
-            org + scaledDiam2,
-            org + scaledDiam2 + scaledDiam3,
-            org + scaledDiam3,
-            org + scaledDiam + scaledDiam3,
-            org + scaledDiam + scaledDiam2 + scaledDiam3,
-            oobb);*/
+
 
         return oobb;
     }

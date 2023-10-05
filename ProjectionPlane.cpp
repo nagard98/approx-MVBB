@@ -35,35 +35,35 @@ class ProjectionPlane {
         }
 
         Proj2DRes projectTo2D(Points3::iterator it, Points3::iterator end){
-            bool hasNegSide = false;
-            bool hasPosSide = false;
-
-            double tmpMinDistNeg = 100000.0f;
-            double tmpMinDistPos = 100000.0f;
-            double tmpMaxDistNeg = 0.0f;
-            double tmpMaxDistPos = 0.0f;
-            K::Vector_3 tmpOffsetPlane;
+            bool hasLSide = false, hasRSide = false;
+            double tmpMinDistLSide = 100000.0f, tmpMinDistRSide = 100000.0f;
+            double tmpMaxDistLSide = 0.0f, tmpMaxDistRSide = 0.0f;;
+            K::Vector_3 tmpOffsetPlane, projVec, planeNormal = _plane.orthogonal_vector();
             Points2 projectedPoints;
+
+            int k1 = 0, k2 = 0;
 
             for(; it != end; it++){
                 K::Point_3 tmpProj = _plane.projection(*it);
-                double dist = ((*it)-tmpProj).squared_length();
+                projVec = (*it) - tmpProj;
+                double dist = projVec.squared_length();
 
-                if(_plane.has_on_negative_side(*it)){
-                    hasNegSide = true;
-                    if(!hasPosSide && dist < tmpMinDistNeg) tmpMinDistNeg = dist;
-                    if(dist > tmpMaxDistNeg){
+                if (planeNormal * projVec < 0) {
+                    hasLSide = true;
+                    if (!hasRSide && dist < tmpMinDistLSide) tmpMinDistLSide = dist;
+                    if (dist > tmpMaxDistLSide) {
                         tmpOffsetPlane = K::Vector_3(tmpProj, *it);
-                        tmpMaxDistNeg = dist;
+                        tmpMaxDistLSide = dist;
                     }
-                }else{
-                    hasPosSide = true;
-                    if(!hasNegSide && dist < tmpMinDistPos){
-                        tmpMinDistPos = dist;
+                }
+                else {
+                    hasRSide = true;
+                    if (!hasLSide && dist < tmpMinDistRSide) {
+                        tmpMinDistRSide = dist;
                         tmpOffsetPlane = K::Vector_3(tmpProj, *it);
                     }
-                    if(dist > tmpMaxDistPos) {
-                        tmpMaxDistPos = dist;
+                    if (dist > tmpMaxDistRSide) {
+                        tmpMaxDistRSide = dist;
                     }
                 }
 
@@ -72,7 +72,7 @@ class ProjectionPlane {
                 projectedPoints.push_back(K::Point_2(pointInPlaneBas.x(), pointInPlaneBas.y()));
             }
 
-            return Proj2DRes(projectedPoints, tmpOffsetPlane, CGAL::approximate_sqrt(tmpMaxDistNeg) + CGAL::approximate_sqrt(tmpMaxDistPos));
+            return Proj2DRes(projectedPoints, tmpOffsetPlane, CGAL::approximate_sqrt(tmpMaxDistLSide) + CGAL::approximate_sqrt(tmpMaxDistRSide));
         }
 
         //Non è una proiezione, è solo un cambio di base

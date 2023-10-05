@@ -45,7 +45,7 @@ int main(int argc, char** argv){
         }
     }
     else {
-        CGAL::Polyhedron_3<K> polyhedron;
+        /*CGAL::Polyhedron_3<K> polyhedron;
         polyhedron.make_tetrahedron(K::Point_3(3.45, -0.14, -6.31), K::Point_3(4.96, 0, 5.26), K::Point_3(-5.7, 0, 2.14), K::Point_3(-2.76, 5.86, 0.48));
 
         CGAL::Random_points_in_triangle_mesh_3<CGAL::Polyhedron_3<K>> g(polyhedron);
@@ -53,11 +53,32 @@ int main(int argc, char** argv){
 
         for (Points3::iterator it = points.begin(); it != points.end(); it++) {
             point_set.insert(*it);
+        }*/
+
+        CGAL::IO::read_PLY("C:/Users/Draga/Documents/GitHub/approx-MVBB/build/Debug/dragon3.ply", point_set);
+
+        for (int i = 0; i < point_set.number_of_points(); i++) {
+            points.push_back(point_set.point(i));
         }
     }
+    
+    /*point_set.clear();
+    point_set.insert(K::Point_3(0,0,0));
+    point_set.insert(K::Point_3(0, 0, 1));
+    point_set.insert(K::Point_3(0, 1, 0));
+    point_set.insert(K::Point_3(0, 1, 1));
+    point_set.insert(K::Point_3(2, 0, 0));
+    point_set.insert(K::Point_3(2, 0, 1));
+    point_set.insert(K::Point_3(2, 1, 0));
+    point_set.insert(K::Point_3(2, 1, 1));
+
+    points.clear();
+    for (int i = 0; i < point_set.number_of_points(); i++) {
+        points.push_back(point_set.point(i));
+    }*/
 
     CGAL::Polyhedron_3<K> oobb = BoundingBox::computeApproxMVBB(points);
-
+    
     QApplication app(argc, argv);
     PointsBox mainwindow(app.activeWindow(), point_set, oobb);
     mainwindow.show();
