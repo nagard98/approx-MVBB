@@ -91,17 +91,6 @@ class Grid3{
                     }
                 }
             }  
-/*            double negDistance = -distance;
-            for(double i=-1.0f; i >= negDistance ; i -= 1.0f ){
-                for(double j=-1.0f; j >= negDistance; j -= 1.0f ){
-                    for(double k=-1.0f; k >= negDistance; k -= 1.0f ){
-                        K::Vector_3 tmpPoint = i * boxDirs._x + j * boxDirs._y + k * boxDirs._z;
-                        if(chebyshevDistance(tmpPoint) <= distance){
-                            tmpPoints.push_back(tmpPoint);
-                        }
-                    }
-                }
-            } */
 
             return tmpPoints;
         }

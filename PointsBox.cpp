@@ -25,13 +25,10 @@ class PointsBox : public CGAL::Basic_viewer_qt {
 
     private:
         void computeElements(){
-            /* add_line(K::Point_3(0,0,0), K::Vector_3(1,0,0));
-            add_line(K::Point_3(0,0,0), K::Vector_3(0,0,1));
-            add_line(K::Point_3(0,0,0), K::Vector_3(0,1,0)); */
 
             add_segment(K::Point_3(-10,0,0), K::Point_3(+10,0,0), CGAL::IO::Color(0,255,0));
             add_segment(K::Point_3(0,0,-10), K::Point_3(0,0,10), CGAL::IO::Color(0,255,0));
-            add_segment(K::Point_3(0,-10,0),K::Point_3(0,+10,0), CGAL::IO::Color(0,255,0));
+            add_segment(K::Point_3(0,-10,0), K::Point_3(0,+10,0), CGAL::IO::Color(0,255,0));
 
             for(CGAL::Point_set_3<K::Point_3>::iterator it = _pointCloud.begin(); it != _pointCloud.end(); it++){
                 add_point(_pointCloud.point(*it));

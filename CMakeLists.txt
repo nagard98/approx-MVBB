@@ -36,11 +36,19 @@ endif()
 # Creating entries for target: main.out
 # ############################
 
-add_executable( main main.cpp Grid.cpp PointsBox.cpp ProjectionPlane.cpp BoundingBox.cpp BoundingBox.hpp)
 if(NOT CGAL_Qt5_FOUND)
 	message(STATUS "CGAL_Qt5 not found")
-	return()
+	add_definitions(-D QT_FOUND=0)
+	add_executable( main main.cpp Grid.cpp ProjectionPlane.cpp BoundingBox.cpp BoundingBox.hpp dragon.ply)
+
+	# Link the executable to CGAL and third-party libraries
+	target_link_libraries(main PRIVATE CGAL::CGAL)
+else()
+	add_definitions(-D QT_FOUND=1)
+	add_executable( main main.cpp Grid.cpp PointsBox.cpp ProjectionPlane.cpp BoundingBox.cpp BoundingBox.hpp dragon.ply)
+
+	# Link the executable to CGAL and third-party libraries
+	target_link_libraries(main PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Basic_viewer)
 endif()
 
-# Link the executable to CGAL and third-party libraries
-target_link_libraries(main PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Basic_viewer)
+
