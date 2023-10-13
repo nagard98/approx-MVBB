@@ -20,6 +20,7 @@ typedef struct Proj2DRes {
 
 } Proj2DRes;
 
+
 class ProjectionPlane {
 
     public:
@@ -34,9 +35,10 @@ class ProjectionPlane {
             _inverseBasisTransform = _basisTransform.inverse();
         }
 
-        Proj2DRes projectTo2D(Points3::iterator it, Points3::iterator end){
+        // proietta punti su piano cambiando anche la base una volta proiettati
+        Proj2DRes project(Points3::iterator it, Points3::iterator end){
             bool hasLSide = false, hasRSide = false;
-            double tmpMinDistLSide = 100000.0f, tmpMinDistRSide = 100000.0f;
+            double tmpMinDistLSide = CGAL_IA_MAX_DOUBLE, tmpMinDistRSide = CGAL_IA_MAX_DOUBLE;
             double tmpMaxDistLSide = 0.0f, tmpMaxDistRSide = 0.0f;;
             K::Vector_3 tmpOffsetPlane, projVec, planeNormal = _plane.orthogonal_vector();
             Points2 projectedPoints;
@@ -67,6 +69,7 @@ class ProjectionPlane {
                     }
                 }
 
+                //Cambio di base
                 K::Point_3 pointInPlaneBas = tmpProj.transform(_basisTransform);
 
                 projectedPoints.push_back(K::Point_2(pointInPlaneBas.x(), pointInPlaneBas.y()));
@@ -75,18 +78,18 @@ class ProjectionPlane {
             return Proj2DRes(projectedPoints, tmpOffsetPlane, CGAL::approximate_sqrt(tmpMaxDistLSide) + CGAL::approximate_sqrt(tmpMaxDistRSide));
         }
 
-        //Non è una proiezione, è solo un cambio di base
-        Points3 unprojectTo3D(CGAL::Polygon_2<K>::iterator it, CGAL::Polygon_2<K>::iterator end){
-            Points3 tmpUnpPoints;
+        // Riporta punti a base originale prima della proiezione
+        Points3 restoreBasis(CGAL::Polygon_2<K>::iterator it, CGAL::Polygon_2<K>::iterator end){
+            Points3 tmpPoints;
             for(; it != end; it++){
                 K::Point_3 tmp = (K::Point_3(it->x(), it->y(), 0)).transform(_inverseBasisTransform);
-                tmpUnpPoints.push_back(tmp);
+                tmpPoints.push_back(tmp);
             }
             
-            return tmpUnpPoints;
+            return tmpPoints;
         }
 
-        K::Point_3 unprojectTo3D(K::Point_2 point){
+        K::Point_3 restoreBasis(K::Point_2 point) {
             return (K::Point_3(point.x(), point.y(), 0)).transform(_inverseBasisTransform);
         }
 

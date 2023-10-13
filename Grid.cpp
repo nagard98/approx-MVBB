@@ -13,6 +13,7 @@ typedef struct Coords2 {
     float x, y;
 } Coords2;
 
+
 typedef struct BoxDirections3 {
     BoxDirections3(){}
     BoxDirections3(K::Vector_3 x, K::Vector_3 y, K::Vector_3 z, K::Point_3 o){
@@ -31,6 +32,7 @@ typedef struct BoxDirections3 {
 
 } BoxDirections3;
 
+
 typedef struct BoxDirections2 {
 
     BoxDirections2(){}
@@ -48,6 +50,7 @@ typedef struct BoxDirections2 {
 
 } BoxDirections2;
 
+
 class Grid3{
 
     public:
@@ -55,6 +58,7 @@ class Grid3{
             this->boxDirs = boxDirections;
         }
 
+        //Campiona punti su griglia 3D
         GridPoints3 snapToGrid(Points3::iterator it, Points3::iterator end){
             GridPoints3 snappedPoints;
             GridPoints3 rescaledPoints;
@@ -83,11 +87,13 @@ class Grid3{
             for(double i=0.0f; i <= distance; i += 1.0f ){
                 for(double j=0.0f; j <= distance; j += 1.0f ){
                     for(double k=0.0f; k <= distance; k += 1.0f ){
+                        
                         K::Vector_3 tmpPoint = i * boxDirs._x + j * boxDirs._y + k * boxDirs._z;
                         if(chebyshevDistance(tmpPoint) <= distance){
                             if(i==0.0f && j==0.0f && k==0.0f) break;
                             else tmpPoints.push_back(tmpPoint);
-                        }                        
+                        }    
+
                     }
                 }
             }  
@@ -143,6 +149,7 @@ class Grid2{
             this->boxDirs = boxDirections;
         }
 
+        //Campiona punti su griglia 2D
         GridPoints2 snapToGrid(Points2::iterator it, Points2::iterator end){
             GridPoints2 snappedPoints;
             GridPoints2 rescaledPoints;

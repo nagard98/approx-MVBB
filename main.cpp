@@ -28,7 +28,7 @@ int main(int argc, char** argv){
     Points3 points;
 
     if (argc == 2) {
-        //load dragon model
+        // carica modello dragon.ply
         if (strcmp(argv[1], "-dragon") == 0) {
             CGAL::IO::read_PLY("../dragon.ply", point_set);
 
@@ -36,7 +36,7 @@ int main(int argc, char** argv){
                 points.push_back(point_set.point(i));
             }
         }
-        //generate random points in tetrahedron
+        // genera punti casuali in tetraedro
         else if (strcmp(argv[1], "-tetra") == 0) {
             CGAL::Polyhedron_3<K> polyhedron;
             polyhedron.make_tetrahedron(K::Point_3(3.45, -0.14, -6.31), K::Point_3(4.96, 0, 5.26), K::Point_3(-5.7, 0, 2.14), K::Point_3(-2.76, 5.86, 0.48));
@@ -50,6 +50,7 @@ int main(int argc, char** argv){
         }
     }
     else {
+        // Di default genera punti casuali su tetraedro
         CGAL::Polyhedron_3<K> polyhedron;
         polyhedron.make_tetrahedron(K::Point_3(3.45, -0.14, -6.31), K::Point_3(4.96, 0, 5.26), K::Point_3(-5.7, 0, 2.14), K::Point_3(-2.76, 5.86, 0.48));
 
@@ -60,21 +61,6 @@ int main(int argc, char** argv){
             point_set.insert(*it);
         }
     }
-    /*
-    point_set.clear();
-    point_set.insert(K::Point_3(0,0,0));
-    point_set.insert(K::Point_3(0, 0, 1));
-    point_set.insert(K::Point_3(0, 1, 0));
-    point_set.insert(K::Point_3(0, 1, 1));
-    //point_set.insert(K::Point_3(2, 0, 0));
-    //point_set.insert(K::Point_3(2, 0, 1));
-    //point_set.insert(K::Point_3(2, 1, 0));
-    //point_set.insert(K::Point_3(2, 1, 1));
-
-    points.clear();
-    for (int i = 0; i < point_set.number_of_points(); i++) {
-        points.push_back(point_set.point(i));
-    }*/
 
     CGAL::Polyhedron_3<K> oobb = BoundingBox::computeApproxMVBB(points);
     

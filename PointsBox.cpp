@@ -26,14 +26,17 @@ class PointsBox : public CGAL::Basic_viewer_qt {
     private:
         void computeElements(){
 
+            // disegna assi x,y,z 
             add_segment(K::Point_3(-10,0,0), K::Point_3(+10,0,0), CGAL::IO::Color(0,255,0));
             add_segment(K::Point_3(0,0,-10), K::Point_3(0,0,10), CGAL::IO::Color(0,255,0));
             add_segment(K::Point_3(0,-10,0), K::Point_3(0,+10,0), CGAL::IO::Color(0,255,0));
 
+            // disegna punti
             for(CGAL::Point_set_3<K::Point_3>::iterator it = _pointCloud.begin(); it != _pointCloud.end(); it++){
                 add_point(_pointCloud.point(*it));
             }
             
+            // disegna bounding box
             for(auto it = _box.edges_begin(); it != _box.edges_end(); it++){
                 add_segment(
                     (it->vertex())->point(), 

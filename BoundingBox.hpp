@@ -23,7 +23,7 @@ typedef struct Caliper {
 K::Vector_3 makeCorrectDirVec(K::Point_3 a, K::Point_3 b);
 
 namespace BoundingBox {
-	CGAL::Polygon_2<K> computeMABB(Points2 points);
+	CGAL::Polygon_2<K> computeMABR(Points2 points);
 
-    CGAL::Polyhedron_3<K> computeApproxMVBB(Points3 pts, double epsilon = 0.005, double gridSize = 5);
+    CGAL::Polyhedron_3<K> computeApproxMVBB(Points3 pts, double epsilon = 0.005, double gridSearchSize = 5);
 }
